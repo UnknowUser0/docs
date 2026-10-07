@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Golan Sertifikasi API",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -11,27 +11,31 @@
   "navigation": {
     "pages": [
       {
-        "group": "Getting Started",
+        "group": "Golan Sertifikasi",
         "pages": [
           "index",
-          "quickstart"
+          "quickstart",
+          "authentication",
+          "errors-and-retries"
+        ],
+        "icon": "book-open"
+      },
+      {
+        "group": "Integrasi Klien",
+        "icon": "code",
+        "pages": [
+          "integrations/angular",
+          "integrations/flutter-android"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "icon": "braces",
+        "pages": [
+          "api-reference/overview"
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -67,6 +71,19 @@
       "x": "https://x.com/mintlify",
       "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
+    }
+  },
+  "description": "Dokumentasi integrasi web dan Android serta referensi API backend Golan Sertifikasi.",
+  "api": {
+    "playground": {
+      "display": "simple"
+    },
+    "examples": {
+      "defaults": "required",
+      "languages": [
+        "curl",
+        "javascript"
+      ]
     }
   }
 }

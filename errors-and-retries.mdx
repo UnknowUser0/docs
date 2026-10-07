@@ -1,0 +1,35 @@
+---
+title: "Error dan retry"
+description: "Penanganan error, pagination, idempotency, dan retry."
+icon: "triangle-alert"
+---
+
+## Format error
+
+Error API menggunakan JSON dengan `code`, `message`, dan `request_id` jika tersedia:
+
+```json
+{
+  "code": "invalid_request",
+  "message": "Request body is invalid",
+  "request_id": "..."
+}
+```
+
+Gunakan HTTP status dan `code` untuk menentukan perilaku aplikasi. Pesan dapat berubah dan sebaiknya hanya ditampilkan sebagai teks fallback. Sertakan `request_id` saat pengguna menghubungi dukungan.
+
+`401` berarti autentikasi tidak ada/kedaluwarsa; `403` berarti izin tidak cukup; `409` menandakan konflik state; `503` dapat berarti integrasi atau fitur belum aktif. Detail per-endpoint ada di OpenAPI.
+
+## Pagination
+
+Ikuti tipe `cursor` dan `limit` pada setiap endpoint. Gunakan `next_cursor` dari respons untuk halaman berikutnya; jangan mengasumsikan cursor selalu angka atau membuat cursor sendiri.
+
+## Idempotency
+
+Jika endpoint menyatakan header `Idempotency-Key` wajib, buat satu key unik per tindakan pengguna dan gunakan ulang key yang sama ketika mengulang request setelah timeout atau hasil yang belum pasti. Jangan membuat key baru untuk retry tindakan yang sama karena itu dapat membuat operasi kedua.
+
+Untuk pembayaran/pesanan, tampilkan state `pending` sebagai belum final dan polling resource yang dikembalikan backend. Jangan menyimpulkan pembayaran berhasil dari redirect browser atau state lokal.
+
+## Kebijakan bisnis
+
+Backend adalah sumber kebenaran untuk saldo, harga, pajak, diskon, refund, penyelesaian kursus, sertifikat, dan izin. Tangani respons penolakan/fitur nonaktif tanpa mencoba menggantinya dengan perhitungan di klien.

@@ -1,0 +1,42 @@
+---
+title: "Flutter Android"
+description: "Pola integrasi Flutter/Android ke Golan Sertifikasi API."
+icon: "mobile"
+---
+
+## API base URL
+
+| Perangkat | URL lokal |
+| --- | --- |
+| Browser web lokal | `http://localhost:18080/api/v1` |
+| Android Emulator | `http://10.0.2.2:18080/api/v1` |
+| Production | `https://<domain-api-anda>/api/v1` |
+
+`10.0.2.2` adalah alias emulator menuju loopback komputer development. Perangkat fisik perlu host yang dapat dijangkau; production domain belum ditetapkan.
+
+## Sesi dan penyimpanan
+
+Dapatkan Google ID token melalui SDK Google Sign-In lalu tukarkan ke `POST /auth/google`. Sertakan access token lewat `Authorization: Bearer <token>`; masa berlaku 15 menit. Muat `GET /me` saat startup untuk memulihkan profil/onboarding.
+
+Simpan token menggunakan secure storage platform, bukan `SharedPreferences` biasa. Jangan menanam client secret atau kredensial server di aplikasi.
+
+## Client HTTP
+
+Gunakan satu client terpusat dengan base URL configurable, timeout, bearer header, dan decoder error bersama.
+
+```dart
+final apiBaseUrl = 'http://10.0.2.2:18080/api/v1';
+
+final response = await http.get(
+  Uri.parse('$apiBaseUrl/me'),
+  headers: {'Authorization': 'Bearer $accessToken'},
+);
+```
+
+Gunakan kontrak OpenAPI backend (`openapi/openapi.yaml`) untuk model request/response.
+
+## Pembayaran dan retry
+
+Jangan menyimpulkan pembayaran berhasil dari redirect/deep link. Perlakukan `pending` sebagai status belum final dan ambil ulang order dari backend. Ulangi mutation hanya jika endpoint mendukung `Idempotency-Key`; untuk timeout atau `503`, muat ulang state backend lebih dulu.
+
+Lihat [Quickstart](/quickstart), [Autentikasi](/authentication), dan [Error dan retry](/errors-and-retries).

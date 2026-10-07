@@ -1,0 +1,29 @@
+---
+title: "Autentikasi"
+description: "Google Sign-In, bearer token, onboarding, dan keamanan kredensial."
+icon: "lock"
+---
+
+## Alur token
+
+1. Aplikasi meminta Google ID token melalui SDK resmi platform.
+2. Kirim ID token ke `POST /auth/google` sebagai `id_token`.
+3. Gunakan `access_token` respons pada header `Authorization: Bearer <access_token>`.
+4. Access token berlaku 15 menit (`expires_in: 900`). Saat kedaluwarsa, jalankan kembali alur autentikasi Google.
+
+Respons login mengikuti schema `Session` pada OpenAPI dan berisi profil `user`. `onboarding_required` menentukan apakah klien perlu menampilkan formulir onboarding. Backend memvalidasi peran dan izin pada setiap request; jangan memakai data peran dari UI sebagai kontrol keamanan.
+
+## Penyimpanan token
+
+- Web: minimalkan masa hidup token di memori aplikasi dan jangan menulis token ke log, URL, analytics, atau storage yang dapat dibaca skrip pihak ketiga.
+- Android: gunakan penyimpanan kredensial terenkripsi yang disediakan platform/aplikasi, bukan `SharedPreferences` biasa.
+- Jangan pernah menyimpan Google client secret, Midtrans Server Key, S3 secret, atau `INTERNAL_SERVICE_TOKEN` di frontend/mobile.
+- Gunakan HTTPS di luar development lokal.
+
+## Onboarding
+
+Jika `onboarding_required` bernilai `true`, kirim data profil ke `PUT /me/onboarding` menggunakan access token. Field wajib dan enum gender tercantum pada halaman endpoint. Baca respons tersimpan dari backend; jangan menandai onboarding selesai hanya berdasarkan state lokal.
+
+## Endpoint publik tanpa login
+
+`POST /auth/google`, `GET /.well-known/jwks.json`, health checks, dan sebagian endpoint katalog ditandai tanpa autentikasi di OpenAPI. Untuk endpoint lainnya, ikuti security requirement yang tercantum pada kontrak.

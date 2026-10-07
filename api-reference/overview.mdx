@@ -1,0 +1,28 @@
+---
+title: "Kontrak OpenAPI"
+description: "Base URL, domain API, dan kesiapan OpenAPI reference."
+icon: "braces"
+---
+
+## Kontrak API
+
+Kontrak endpoint kanonis adalah OpenAPI 3.0.3 di repository backend: `openapi/openapi.yaml`. Gunakan file itu untuk schema request/response dan security tiap endpoint.
+
+> Deployment Mintlify ini masih terhubung ke repository dokumentasi template yang terpisah. Karena itu, OpenAPI belum diproses menjadi endpoint reference interaktif di situs ini. Source repository perlu diarahkan ke `golan-sertifikasi-backend` agar konfigurasi `docs.json` dan spec tersebut dipakai pada build.
+
+## Base URL
+
+Public API memakai prefix `/api/v1` melalui KrakenD. URL production perlu ditetapkan setelah domain API tersedia.
+
+## Domain API
+
+Kontrak meliputi Identity/onboarding, katalog dan review, enrollment/pembelajaran/sertifikat, BNSP, cart/order/payment/refund/wallet, referral, notifikasi/media, administrasi, dan health checks.
+
+## Aturan client
+
+- Ikuti bearer security requirement per endpoint.
+- Tangani error berdasarkan status dan `code`; simpan `request_id` untuk dukungan.
+- Nilai uang adalah integer Rupiah.
+- Jangan memanggil port service internal atau membuat keputusan otorisasi di klien.
+
+Lihat [Quickstart](/quickstart), [Angular Web](/integrations/angular), dan [Flutter Android](/integrations/flutter-android).

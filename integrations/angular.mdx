@@ -1,0 +1,45 @@
+---
+title: "Angular Web"
+description: "Pola integrasi Angular ke Golan Sertifikasi API."
+icon: "code"
+---
+
+## API base URL
+
+Semua request lewat public gateway KrakenD, bukan service internal.
+
+| Lingkungan | URL |
+| --- | --- |
+| Web lokal | `http://localhost:18080/api/v1` |
+| Production | `https://<domain-api-anda>/api/v1` |
+
+## Sesi
+
+Dapatkan Google ID token melalui Google Identity Services lalu tukarkan ke `POST /auth/google`. Kirim access token sebagai `Authorization: Bearer <token>`; token berlaku 15 menit. Muat `GET /me` dan selesaikan `PUT /me/onboarding` bila `onboarding_required` bernilai true.
+
+Jangan simpan Google client secret, Midtrans key, S3 secret, atau service token di browser.
+
+## Pola Angular
+
+Letakkan HTTP request di satu API service/client, bukan di komponen. Gunakan `HttpInterceptor` untuk menambah bearer token. Petakan error berdasarkan status dan `code`, bukan pesan bebas.
+
+```ts
+const apiBaseUrl = 'http://localhost:18080/api/v1';
+
+getProfile(accessToken: string) {
+  return this.http.get(`${apiBaseUrl}/me`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+}
+```
+
+Generate atau validasi DTO menggunakan kontrak OpenAPI backend, `openapi/openapi.yaml`; jangan membuat schema berbeda per halaman.
+
+## Alur aplikasi
+
+- Katalog: `GET /categories`, `GET /courses`, `GET /courses/{course_id}`.
+- Checkout: status `pending` bukan bukti pembayaran berhasil.
+- Pembelajaran: gunakan enrollment, content, assessment, dan progress dari server.
+- Permission di UI hanya untuk pengalaman pengguna; backend tetap memutuskan otorisasi.
+
+Lihat [Quickstart](/quickstart), [Autentikasi](/authentication), dan [Error dan retry](/errors-and-retries).
